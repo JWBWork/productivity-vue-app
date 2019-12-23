@@ -69,27 +69,34 @@
         },
 
         data: () => ({
-            todos: [{
-                id: 0,
-                title: "title 0",
-                parent_id: null
-            }, {
-                id: 1,
-                title: "title 1",
-                parent_id: null
-            }, {
-                id: 2,
-                title: "title 1",
-                parent_id: 1
-            }, {
-                id: 3,
-                title: "title 1",
-                parent_id: 1
-            }, {
-                id: 4,
-                title: "title 1",
-                parent_id: null
-                }],
+            todos: [
+                {
+                    id: 0,
+                    title: "title 0",
+                    parent_id: null,
+                    position: 0
+                }, {
+                    id: 1,
+                    title: "title 1",
+                    parent_id: null,
+                    position: 1
+                }, {
+                    id: 2,
+                    title: "title 1",
+                    parent_id: 1,
+                    position: 0
+                }, {
+                    id: 3,
+                    title: "title 1",
+                    parent_id: 1,
+                    position: 1
+                }, {
+                    id: 4,
+                    title: "title 1",
+                    parent_id: null,
+                    position: 2
+                }
+            ],
             calEvents: [{
                 id: 0,
                 title: "event 0 title",
@@ -114,6 +121,7 @@
                             if (children.length) obj.children = children
                             r.push(obj)
                         }
+                        r.sort((a, b) => (a.position > b.position) ? 1 : -1)
                         return r;
                     }, [])
                 }
@@ -121,23 +129,124 @@
             }
         },
         methods: {
+            getTodo: function (todoId) {
+                for (let todo of this.todos) {
+                    if (todo.id == todoId) {
+                        return todo;
+                    }
+                }
+            },
             getNestedTodo: function (todoId, searchList = null) {
+                if (todoId == null) {
+                    return this.nestedTodos;
+                }
+
                 if (searchList == null) { searchList = [...this.nestedTodos] }
                 for (let todo of searchList) {
                     if (todo.id == todoId) {
                         return todo;
-                    } else {
-                        if (todo.hasOwnProperty("children")){
-                            return this.getNestedTodo(todoId, todo.children);
-                        }
+                    }
+                }
+                for (let todo of searchList) {
+                    if (todo.hasOwnProperty("children")){
+                        return this.getNestedTodo(todoId, todo.children);
                     }
                 }
             },
             droppedTodo: function (droppedId, position, adjacentId) {
+                /**For editing/reccalculating nested list on drag/drop
+                 * 
+                 * does nothing if:
+                 * - dropped inside/adjacent to self
+                 * - dropped adjacent and in-order i.e. same position
+                 * - dropped in child/descendent
+                 * */
                 console.log(droppedId, position, adjacentId);
-                //with the dropped id get the current parent and position
-                //with the adjacent id get the new parent and postion
-                console.log(this.getNestedTodo(droppedId))
+                //dont move if dropping inside/adjacent to self
+                if (droppedId == adjacentId) {
+                    console.log("reutrn - dropped and sdjacent is same");
+                    return
+                }
+
+                // do nothing if already adjacent and in-order
+                let droppedTodo = this.getTodo(droppedId);
+                let adjacentTodo = this.getTodo(adjacentId);
+                if (droppedTodo.parent_id == adjacentTodo.parent_id) {
+                    if (
+                        (position == "above" & droppedTodo.position == adjacentTodo.position - 1) |
+                        (position == "below" & droppedTodo.position == adjacentTodo.position + 1)
+                    ) {
+                        console.log("return - adjacent drop");
+                        return
+                    }
+                }
+
+                //dont drop inside descendent
+                let parentTodo = this.getTodo(adjacentTodo.parent_id);
+                while (parentTodo) {
+                    if (parentTodo.id == droppedId) {
+                        console.log("return - attempted drop into descendent")
+                        return
+                    }
+                    parentTodo = this.getTodo(parentTodo.parent_id);
+                }
+
+                // new position values for previous home
+                if (droppedTodo.parent_id != adjacentTodo.parent_id) {
+                    let prevHome = this.getNestedTodo(droppedTodo.parent_id);
+                    if (prevHome.hasOwnProperty("children")) {
+                        prevHome = prevHome.children
+                    }
+                    let newPos = 0
+                    for (let todoNested of prevHome) {
+                        if (todoNested.id != droppedId) {
+                            let todoTrue = this.getTodo(todoNested.id);
+                            todoTrue.position = newPos;
+                            newPos++;
+                        }
+                    }
+                }
+
+                // new position values for new home
+                var newHome = this.getNestedTodo(adjacentTodo.parent_id);
+                if (newHome.hasOwnProperty("children")) {
+                    newHome = newHome.children
+                } else {
+                    if (position == "inside") {
+                        newHome = [];
+                    }
+                }
+                if (droppedTodo.parent_id == adjacentTodo.parent_id) {
+                    newHome = newHome.filter(todo => todo.id != droppedId);
+                }
+                var adjacentIndex;
+                for (let i = 0; i < newHome.length; i++) {
+                    let todo = newHome[i];
+                    if (todo.id == adjacentId) {
+                        adjacentIndex = i;
+                        break
+                    }
+                }
+                if (position == "above") {
+                    newHome.splice(adjacentIndex, 0, Object.assign({}, droppedTodo));
+                } else if ( position == "below" ) {
+                    newHome.splice(adjacentIndex + 1, 0, Object.assign({}, droppedTodo));
+                } else if ( position == "inside" ) {
+                    newHome.splice(newHome.length, 0, Object.assign({}, droppedTodo));
+                }
+                let newPos = 0;
+                for (let todoNested of newHome) {
+                    let trueTodo = this.getTodo(todoNested.id);
+                    trueTodo.position = newPos;
+                    newPos++;
+                }
+
+                // sets new parent
+                if (position == "inside") {
+                    droppedTodo.parent_id = adjacentTodo.id
+                } else {
+                    droppedTodo.parent_id = adjacentTodo.parent_id
+                }
             }
         },
         filters: {

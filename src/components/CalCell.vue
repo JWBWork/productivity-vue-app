@@ -1,7 +1,7 @@
 <template>
     <div :style='style' class="content">
         <div>
-            <div>{{start.format('LT')}} - {{end.format('LT')}}</div>
+            <div>{{start.format('LT')}}</div>
         </div>
     </div>
 </template>

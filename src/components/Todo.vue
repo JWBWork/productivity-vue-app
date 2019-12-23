@@ -5,20 +5,22 @@
         <Drag :transfer-data="todo"
               class="drag-handle">
             <p>{{todo.id}}: {{todo.title}}</p>
-            <template slot="image">
-                <div v-html="selfHTML"></div>
+            <Drop @drop="dropInside"
+                  class="drop-zone"
+                  style="width:10px;display:inline-block;"></Drop>
+            <template v-if="renderTemplate" slot="image">
+                <Todo :todo="todoCopy" :renderTemplate="false"></Todo>
+                <!--<div v-html="selfHTML"></div>-->
             </template>
         </Drag>
         <button @click="$emit('delete-todo', todo.id)">X</button>
         <button>+</button>
-        <Drop @drop="dropInside"
-              class="drop-zone"
-              style="width:10px;display:inline-block;"></Drop>
         <Todo v-for="child in todo.children"
               v-bind:key="child.id"
               v-bind:todo="child"
               @delete-todo="emitDeleteTodo"
-              @drop="emitDrop" />
+              @drop="emitDrop" 
+              :renderTemplate="renderTemplate"/>
         <Drop @drop="dropBelow"
               class="drop-zone"></Drop>
     </div>
@@ -29,14 +31,22 @@
 
     export default {
         name: 'Todo',
-        props: ["todo"],
+        props: {
+            todo: {
+                type: Object
+            },
+            renderTemplate: {
+                type: Boolean,
+                default: true
+            }
+        },
         components: {
             Drag,
             Drop
         },
         data: function () {
             return {
-                selfHTML: null
+                todoCopy: Object.assign({}, this.todo),
             }
         },
         methods: {
@@ -79,10 +89,10 @@
             todoElId: function () {
                 return `todo-id-${this.todo.id}`
             },
-            //selfHTML: function () {
-            //    return this.dragHTML;
-            //    //return document.getElementById(this.todoElId).innerHTML;
-            //}
+            selfHTML: function () {
+                return "drag HTML";
+                //return document.getElementById(this.todoElId).innerHTML;
+            }
         }
     };
 </script>
