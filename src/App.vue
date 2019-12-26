@@ -45,7 +45,10 @@
                     <v-col cols="5">
                         <TodoList :nestedTodos="nestedTodos"
                                   style="height:75vh;"
-                                  @drop="droppedTodo"/>
+                                  @drop="droppedTodo"
+                                  @delete-todo="deleteTodo"
+                                  @toggle-todo="toggleTodo"
+                                  @new-todo="createTodo"/>
                     </v-col>
                 </v-row>
             </v-container>
@@ -72,27 +75,32 @@
             todos: [
                 {
                     id: 0,
-                    title: "title 0",
+                    complete: false,
+                    title: "go shopping",
                     parent_id: null,
                     position: 0
                 }, {
                     id: 1,
-                    title: "title 1",
+                    complete: false,
+                    title: "bang tolu",
                     parent_id: null,
                     position: 1
                 }, {
                     id: 2,
-                    title: "title 1",
+                    complete: false,
+                    title: "tolu butt -> face",
                     parent_id: 1,
                     position: 0
                 }, {
                     id: 3,
-                    title: "title 1",
+                    complete: false,
+                    title: "doodle",
                     parent_id: 1,
                     position: 1
                 }, {
                     id: 4,
-                    title: "title 1",
+                    complete: false,
+                    title: "butts",
                     parent_id: null,
                     position: 2
                 }
@@ -134,6 +142,33 @@
                     if (todo.id == todoId) {
                         return todo;
                     }
+                }
+            },
+            getTodoDescendents: function (parentId) {
+                let todoCollection = [parentId];
+                for (let todoId of todoCollection) {
+                    let childTodos = this.todos.filter(todo => todo.parent_id == todoId);
+                    childTodos = childTodos.map(todo => todo.id);
+                    //todoCollection = todoCollection.concat(childTodos);
+                    todoCollection.push.apply(todoCollection, childTodos);
+                }
+                return todoCollection;
+            },
+            deleteTodo: function (todoId) {
+                let toDelete = this.getTodoDescendents(todoId);
+                this.todos = this.todos.filter(todo => !toDelete.includes(todo.id));
+            },
+            toggleTodo: function (todoId) {
+                let todo = this.getTodo(todoId);
+                if (todo.complete) {
+                    todo.complete = false;
+                    return
+                }
+
+                let toMarkComplete = this.getTodoDescendents(todoId);
+                for (let todoToggleId of toMarkComplete) {
+                    let todo = this.getTodo(todoToggleId);
+                    todo.complete = true;
                 }
             },
             getNestedTodo: function (todoId, searchList = null) {
@@ -247,6 +282,9 @@
                 } else {
                     droppedTodo.parent_id = adjacentTodo.parent_id
                 }
+            },
+            createTodo: function (newTodo) {
+                console.log("newTodo", newTodo);
             }
         },
         filters: {

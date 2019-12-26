@@ -1,9 +1,21 @@
 <template>
     <div class="todolist">
-        <div>
+        <v-expansion-panels>
+            <v-expansion-panel @click.stop> 
+                <v-expansion-panel-header @click.stop>
+                    <input type="text" v-model="newTodo.title" @keydown.space="debug" @click.stop/>
+                    <input type="submit" value="+" v-on:click="emitNewTodo()" />
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                    Expansion panel content
+                </v-expansion-panel-content>
+            </v-expansion-panel>
+        </v-expansion-panels>
+        <!--<div>
             <input type="text" v-model="newTodo.title"/>
             <input type="submit" value="+" v-on:click="emitNewTodo()"/>
-        </div>
+        </div>-->
+
         <!--<h3>Todos:</h3>-->
         <div v-bar style="height:80vh">
             <div>
@@ -11,7 +23,8 @@
                       v-bind:key="todo.id"
                       v-bind:todo="todo"
                       @delete-todo="emitDeleteTodo"
-                      @drop="emitDrop" />
+                      @drop="emitDrop" 
+                      @toggle-todo="emitToggleTodo"/>
             </div>
         </div>
     </div>
@@ -38,7 +51,7 @@
         methods: {
             emitNewTodo: function (newTodo) {
                 if (typeof newTodo == "undefined") {
-                    console.log("new todo: ", newTodo);
+                    //console.log("new todo: ", newTodo);
                     if (this.newTodo.title.length < 5) {
                         return;
                     }
@@ -50,9 +63,16 @@
             emitDeleteTodo: function (todo_id) {
                 this.$emit('delete-todo', todo_id);
             },
+            emitToggleTodo: function (todo_id) {
+                this.$emit('toggle-todo', todo_id);
+            },
             emitDrop: function (droppedId, position, adjacentId) {
                 //console.log("drop", droppedId, position, adjacentId);
                 this.$emit("drop", droppedId, position, adjacentId);
+            },
+            debug: function (event) {
+                console.log("info: ", event);
+                event.stopPropagation()
             }
         },
     };

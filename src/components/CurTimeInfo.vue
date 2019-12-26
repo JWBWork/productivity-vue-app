@@ -23,11 +23,11 @@
         /*position: relative;*/
         height: 98px;
         border-bottom-width: 2px;
-        margin: -98px 5px 0 5px;
+        /*margin: -98px 5px 0 5px;
         top: -100px;
         transform: translateY(100px);
         z-index:3;
-        opacity:0.9;
+        opacity:0.9;*/
 
         border-bottom: solid;
         border-bottom-color: red;
