@@ -177,7 +177,8 @@
         /*border-width: 1px;*/
         margin: 0 0 0 5px;
         /*height: 85vh;*/
-        height: 100%;
+        /*height: 100%;*/
+        height: 60vh;
     }
 </style>
 
