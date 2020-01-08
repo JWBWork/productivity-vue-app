@@ -29,7 +29,7 @@
             </v-btn>
         </v-app-bar>
 
-        <v-content>
+        <v-content style="overflow:hidden">
             <v-container style="padding:0 5px">
                 <v-row no-gutters justify="center">
                     <v-col cols="5" style="text-align:center">flow</v-col>

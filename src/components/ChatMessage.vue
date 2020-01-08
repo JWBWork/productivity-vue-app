@@ -1,6 +1,6 @@
 <template>
-    <div id="ChatMessageRoot" style="width:100%;display:inline-block">
-        <div :style="messageType">
+    <div id="chatMessageRoot" style="width:100%;display:inline-block">
+        <div :style="messageType" class="message">
             {{message.body}}
         </div>
     </div>
@@ -12,21 +12,17 @@
         props: ["message"],
         computed: {
             messageType: function () {
+                let style = {};
                 if (this.message.from == "user") {
-                    //console.log("user message");
-                    return {
-                        backgroundColor: "blue",
-                        float: "right"
-                    }
+                    style.backgroundColor = "lightblue";
+                    style.float = "right";
+                    return style
                 } else if (this.message.from == "app") {
-                    //console.log("app message");
-                    return {
-                        backgroundColor: "red",
-                        float: "left"
-                    }
-                } else {
-                    return {}
+                    style.backgroundColor = "pink";
+                    style.float = "left";
+                    return style
                 }
+                return style
             }
         },
         methods: {
@@ -34,14 +30,21 @@
         mounted: function () {
             //console.log(this.message);
         }
-    };
+    }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    #ChatMessageRoot{
+    #chatMessageRoot{
         height: auto;
         width:auto;
     }
+
+    .message{
+        border-radius: 12px;
+        padding: 10px 15px;
+        color: darkslategrey;
+    }
+
 </style>
 

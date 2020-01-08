@@ -1,10 +1,13 @@
 <template>
     <div>
-        <div v-bar >
-            <ChatMessage v-for="message in messages"
-                         :key="message.id"
-                         :message="message"/>
+        <div v-bar>
+            <div class="ChatRoot">
+                <ChatMessage v-for="message in messages"
+                                :key="message.id"
+                                :message="message"/>
+            </div>
         </div>
+        <v-text-field label="test"></v-text-field>
     </div>
 </template>
 
@@ -27,15 +30,17 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    #ChatRoot{
-        overflow-y: scroll;
+    .ChatRoot{
+        /*overflow-y: scroll;*/
         /*border-style: solid;*/
         /*border-color: black;*/
         /*border-width: 1px;*/
-        margin: 0 0 0 5px;
+        /*margin: 0 0 0 5px;*/
         /*height: 85vh;*/
         /*height: 100%;*/
         height: 60vh;
+        max-height: 60vh;
+        min-height: 60vh;
     }
 </style>
 

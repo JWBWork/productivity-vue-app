@@ -150,23 +150,24 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    .todo{
+    .todo {
         border-style: solid;
-        border-color: black;
-        border-width: 1px;
+        border-color: lightblue;
+        border-width: 2px;
         margin: 5px;
+        color: darkslategrey;
     }
 
-    .drop-zone{
+    .drop-zone {
         width: 100%;
         height: 10px;
         background-color: lightblue;
     }
-    .complete{
+    .complete {
         text-decoration: line-through;
     }
 
-    .v-text-field__slot label{
+    .v-text-field__slot label {
         padding:0;
     }
 </style>
