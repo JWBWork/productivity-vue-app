@@ -37,10 +37,11 @@
                 </v-row>
                 <v-row justify="center">
                     <v-col cols="5">
-                        <DayFlow :calEvents="calEvents" 
-                                 :startTime="startTime" 
+                        <!--<DayFlow :calEvents="calEvents"
+                                 :startTime="startTime"
                                  :endTime="endTime"
-                                 style="height:75vh;"/>
+                                 style="height:75vh;"/>-->
+                        <Chat :messages="messages"/>
                     </v-col>
                     <v-col cols="5">
                         <TodoList :nestedTodos="nestedTodos"
@@ -52,6 +53,7 @@
                     </v-col>
                 </v-row>
             </v-container>
+
             <!--<span>{{todos | pretty}}</span>-->
             <!--<span>{{nestedTodos | pretty}}</span>-->
         </v-content>
@@ -62,13 +64,14 @@
     //import HelloWorld from './components/HelloWorld';
     import TodoList from './components/TodoList';
     import DayFlow from './components/DayFlow';
+    import Chat from './components/Chat';
     import moment from 'moment';
 
     export default {
         name: 'App',
 
         components: {
-            TodoList, DayFlow
+            TodoList, DayFlow, Chat
         },
 
         data: () => ({
@@ -82,13 +85,13 @@
                 }, {
                     id: 1,
                     complete: false,
-                    title: "bang tolu",
+                    title: "tolu",
                     parent_id: null,
                     position: 1
                 }, {
                     id: 2,
                     complete: false,
-                    title: "tolu butt -> face",
+                    title: "face",
                     parent_id: 1,
                     position: 0
                 }, {
@@ -100,22 +103,42 @@
                 }, {
                     id: 4,
                     complete: false,
-                    title: "butts",
+                    title: "testtest",
                     parent_id: null,
                     position: 2
                 }
             ],
-            calEvents: [{
-                id: 0,
-                title: "event 0 title",
-                start: moment().set({'hour':1, 'minute':30}),
-                end: moment().set({'hour':2, 'minute':0})
-            },{
-                id: 1,
-                title: "event 1 title",
-                start: moment().set({'hour':2, 'minute':30}),
-                end: moment().set({'hour':3, 'minute':30})
-            }],
+            calEvents: [
+                {
+                    id: 0,
+                    title: "event 0 title",
+                    start: moment().set({ 'hour': 1, 'minute': 30 }),
+                    end: moment().set({ 'hour': 2, 'minute': 0 })
+                }, {
+                    id: 1,
+                    title: "event 1 title",
+                    start: moment().set({ 'hour': 2, 'minute': 30 }),
+                    end: moment().set({ 'hour': 3, 'minute': 30 })
+                }],
+            messages: [
+                {
+                    id: 0,
+                    body: "blah lahasd",
+                    from: "app"
+                },{
+                    id: 1,
+                    body: "asdf",
+                    from: "user"
+                },{
+                    id: 2,
+                    body: "sadfouasdf",
+                    from: "app"
+                },{
+                    id: 3,
+                    body: "wudmfbo",
+                    from: "user"
+                }
+            ],
             startTime: moment().startOf("day"),
             endTime: moment().endOf("day")
         }),
@@ -183,14 +206,14 @@
                     }
                 }
                 for (let todo of searchList) {
-                    if (todo.hasOwnProperty("children")){
+                    if (todo.hasOwnProperty("children")) {
                         return this.getNestedTodo(todoId, todo.children);
                     }
                 }
             },
             droppedTodo: function (droppedId, position, adjacentId) {
                 /**For editing/reccalculating nested list on drag/drop
-                 * 
+                 *
                  * does nothing if:
                  * - dropped inside/adjacent to self
                  * - dropped adjacent and in-order i.e. same position
@@ -264,9 +287,9 @@
                 }
                 if (position == "above") {
                     newHome.splice(adjacentIndex, 0, Object.assign({}, droppedTodo));
-                } else if ( position == "below" ) {
+                } else if (position == "below") {
                     newHome.splice(adjacentIndex + 1, 0, Object.assign({}, droppedTodo));
-                } else if ( position == "inside" ) {
+                } else if (position == "inside") {
                     newHome.splice(newHome.length, 0, Object.assign({}, droppedTodo));
                 }
                 let newPos = 0;

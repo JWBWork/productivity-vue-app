@@ -20,8 +20,8 @@
         <div v-bar style="height:80vh">
             <div>
                 <Todo v-for="todo in nestedTodos"
-                      v-bind:key="todo.id"
-                      v-bind:todo="todo"
+                      :key="todo.id"
+                      :todo="todo"
                       @delete-todo="emitDeleteTodo"
                       @drop="emitDrop" 
                       @toggle-todo="emitToggleTodo"/>

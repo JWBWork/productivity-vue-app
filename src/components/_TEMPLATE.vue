@@ -8,6 +8,8 @@
     export default {
         name: '',
         props: [],
+        components: {
+        },
         computed: {//object of funcitons
         },
         methods: {//object of funcitons
