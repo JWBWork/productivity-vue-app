@@ -1,13 +1,13 @@
 <template>
     <div>
         <div v-bar>
-            <div class="ChatRoot">
+            <div class="ChatRoot" ref="chatScrollWindow">
                 <ChatMessage v-for="message in messages"
-                                :key="message.id"
-                                :message="message"/>
+                             :key="message.id"
+                             :message="message" />
             </div>
         </div>
-        <v-text-field label="test"></v-text-field>
+        <v-text-field @keyup.enter.native="userSubmit" v-model="userMessage"></v-text-field>
     </div>
 </template>
 
@@ -16,21 +16,54 @@
 
     export default {
         name: 'Chat',
-        props: ["messages"],
-        components: {ChatMessage},
+        props: [],
+        data: function () {
+            return {
+                userMessage: ""
+            }
+        },
+        components: { ChatMessage },
         computed: {//object of funcitons
+            messages: function () {
+                return this.$store.state.messages
+            }
         },
         methods: {//object of funcitons
+            userSubmit() {
+                if (this.userMessage.trim() == "") {
+                    return
+                }
+                let msg = {
+                    body: this.userMessage.trim(),
+                    from: "user"
+                }
+                //this.$store.commit('addMessage', msg);
+                this.$store.dispatch(
+                    'addMessage', msg
+                ).then(() => {
+                    this.scrollDown();
+                    this.userMessage = "";
+                    setTimeout(
+                        this.scrollDown,
+                        750
+                    );
+                });
+            },
+            scrollDown() {
+                let chatScrollWindow = this.$refs.chatScrollWindow;
+                chatScrollWindow.scrollTop = chatScrollWindow.scrollHeight;
+            }
         },
         mounted: function () {
-            //console.log(this.messages);
+            console.log("mounted");
+            this.scrollDown();
         }
     };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    .ChatRoot{
+    .ChatRoot {
         /*overflow-y: scroll;*/
         /*border-style: solid;*/
         /*border-color: black;*/

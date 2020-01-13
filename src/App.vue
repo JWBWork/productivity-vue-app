@@ -41,7 +41,7 @@
                                  :startTime="startTime"
                                  :endTime="endTime"
                                  style="height:75vh;"/>-->
-                        <Chat :messages="messages"/>
+                        <Chat/>
                     </v-col>
                     <v-col cols="5">
                         <TodoList :nestedTodos="nestedTodos"
