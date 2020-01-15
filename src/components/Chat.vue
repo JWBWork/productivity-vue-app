@@ -38,9 +38,17 @@
                     from: "user"
                 }
                 //this.$store.commit('addMessage', msg);
-                this.$store.dispatch(
-                    'addMessage', msg
-                ).then(() => {
+                //this.$store.dispatch(
+                //    'addMessage', msg
+                //).then(() => {
+                //    this.scrollDown();
+                //    this.userMessage = "";
+                //    setTimeout(
+                //        this.scrollDown,
+                //        750
+                //    );
+                //});
+                this.$socket.emit('CHAT', msg).then(() => {
                     this.scrollDown();
                     this.userMessage = "";
                     setTimeout(
